@@ -10,6 +10,13 @@ export function deserializeRequest(
 ): Request {
   return new Request(serializedRequest.url, {
     ...serializedRequest,
+    // A fetch request cannot be constructed with the mode 'navigate'
+    // therefore we need to set it to undefined when we reconstruct it from
+    // the worker's message
+    mode:
+      serializedRequest.mode !== 'navigate'
+        ? serializedRequest.mode
+        : undefined,
     body: pruneGetRequestBody(serializedRequest),
   })
 }
